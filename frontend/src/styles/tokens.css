@@ -1,0 +1,18 @@
+:root{
+  --color-glacier-500: #2f6fa1;
+  --color-indigo-600: #4f46e5;
+  --color-earth-500: #8b7754;
+  --color-saffron-500: #ffb703;
+  --color-pine-500: #0b3d2e;
+
+  --space-4: 1rem;
+  --space-8: 2rem;
+  --radius-base: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --color-glacier-500: #275979;
+    --color-indigo-600: #3730a3;
+  }
+}

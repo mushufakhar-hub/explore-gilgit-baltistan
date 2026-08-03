@@ -1,0 +1,32 @@
+services:
+  - name: explore-gilgit-web
+    type: web
+    env: docker
+    plan: free
+    docker:
+      dockerfilePath: backend/Dockerfile
+    envVars:
+      - key: PORT
+        value: '8000'
+
+  - name: explore-gilgit-worker
+    type: worker
+    env: docker
+    plan: free
+    docker:
+      dockerfilePath: backend/Dockerfile
+    startCommand: celery -A celery_worker.celery_app worker --loglevel=info
+    envVars:
+      - key: CELERY_BROKER_URL
+        value: ${REDIS_URL}
+
+  - name: explore-gilgit-beat
+    type: worker
+    env: docker
+    plan: free
+    docker:
+      dockerfilePath: backend/Dockerfile
+    startCommand: celery -A celery_worker.celery_app beat --loglevel=info
+    envVars:
+      - key: CELERY_BROKER_URL
+        value: ${REDIS_URL}

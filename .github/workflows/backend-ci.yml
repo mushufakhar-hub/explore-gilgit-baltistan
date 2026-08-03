@@ -1,0 +1,54 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint-test-build:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip build
+
+      - name: Install project (dev extras)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Black format check
+        run: black --check .
+
+      - name: Mypy type checks
+        run: mypy .
+
+      - name: Pip-Audit
+        run: |
+          python -m pip install pip-audit
+          python -m pip_audit --json || true
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Docker build (CI check)
+        uses: docker/build-push-action@v4
+        with:
+          context: ./
+          file: backend/Dockerfile
+          push: false
+          tags: explore-gilgit/backend:ci
