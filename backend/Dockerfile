@@ -16,13 +16,13 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy project metadata first to leverage Docker cache
-COPY backend/pyproject.toml ./pyproject.toml
+COPY pyproject.toml pyproject.toml
 
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir "build" \
  && pip install --no-cache-dir .
 
-COPY backend/ ./
+COPY . /app
 
 FROM python:3.12-slim
 
@@ -36,7 +36,7 @@ WORKDIR /app
 # Copy venv from builder
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-ss
+
 # Copy source
 COPY --from=builder /app /app
 
